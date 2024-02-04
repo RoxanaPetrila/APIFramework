@@ -83,7 +83,6 @@ public class CreateUserTest {
         password = "Password1224!";
 
         RequestAccount requestAccount = new RequestAccount(username, password);
-
         requestSpecification.body(requestAccount);
 
         Response response = requestSpecification.post("/Account/v1/User");
