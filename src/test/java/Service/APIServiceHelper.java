@@ -3,6 +3,7 @@ package Service;
 import LoggerUtility.LoggerUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.internal.RequestSpecificationImpl;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import com.fasterxml.jackson.databind.ObjectMapper;
 public class APIServiceHelper {
@@ -13,6 +14,23 @@ public class APIServiceHelper {
         LoggerUtility.info(getRequestUrl(path));
         LoggerUtility.info(getRequestMethod(methodType));
         LoggerUtility.info(getRequestBody(requestSpecification));
+
+    }
+
+    public static void responseLogs(Response response){
+        LoggerUtility.info("====== Response Info ======");
+        LoggerUtility.info(getResponseStatusCode(response));
+        LoggerUtility.info(getResponseStatus(response));
+        LoggerUtility.info(getResponseBody(response));
+
+    }
+
+    private static String getResponseStatusCode(Response response){
+        return "Response Status: " + response.getStatusLine();
+    }
+
+    private static String getResponseStatus(Response response){
+        return "Response Status Code: " + response.getStatusCode();
     }
 
     private static String getRequestUrl(String path){
@@ -37,6 +55,15 @@ public class APIServiceHelper {
 
         }
         return requestBody;
+    }
+
+    private static String getResponseBody(Response response){
+        if(response.getBody() != null){
+            return "Response Body: \n" + response.getBody().asPrettyString();
+        }
+        else {
+            return "Response Body";
+        }
     }
 
 }

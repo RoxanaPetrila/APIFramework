@@ -7,4 +7,6 @@ public class RestRequestStatus {
 
     public static final Integer SC_NOTACCEPTABLE =406;
 
+    public static final Integer SC_UNAUTHORIZED = 401;
+
 }

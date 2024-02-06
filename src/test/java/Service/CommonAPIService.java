@@ -21,6 +21,8 @@ public class CommonAPIService {
 
         //trebuie facut response-ul
         Response response = performRequest(RestRequestType.REQUEST_POST, requestSpecification, URL);
+
+        APIServiceHelper.responseLogs(response);
         return response;
 
     }
@@ -48,9 +50,26 @@ public class CommonAPIService {
         RequestSpecification requestSpecification = RestAssured.given();
         requestSpecification.header("Authorization", "Bearer " + token);
 
+        APIServiceHelper.requestLogs(requestSpecification, URL, RestRequestType.REQUEST_GET);
+
         //trebuie facut response-ul
         Response response = performRequest(RestRequestType.REQUEST_GET, requestSpecification, URL);
+        APIServiceHelper.responseLogs(response);
         return response;
+
+    }
+
+    public Response delete(String URL, String token){
+        RequestSpecification requestSpecification = RestAssured.given();
+        requestSpecification.header("Authorization", "Bearer " + token);
+
+        APIServiceHelper.requestLogs(requestSpecification, URL, RestRequestType.REQUEST_DELETE);
+
+        //trebuie facut response-ul
+        Response response = performRequest(RestRequestType.REQUEST_DELETE, requestSpecification, URL);
+        APIServiceHelper.responseLogs(response);
+        return response;
+
     }
 
 }

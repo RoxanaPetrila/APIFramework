@@ -2,6 +2,8 @@ package Actions;
 
 import Objects.RequestObject.RequestAccount;
 import Objects.RequestObject.RequestAccountToken;
+import Objects.ResponseObject.ResponseAccountAuthorize;
+import Objects.ResponseObject.ResponseAccountFailed;
 import Objects.ResponseObject.ResponseSuccessAccount;
 import Objects.ResponseObject.ResponseTokenSuccess;
 import Rest.RestRequestStatus;
@@ -43,6 +45,39 @@ public class AccountActions {
         Assert.assertEquals(responseTokenSuccess.getResult(), "User authorized successfully.");
 
         return responseTokenSuccess;
+
+    }
+
+    public void obtainSpecificAccount(String userID, String token, String username){
+        accountService = new AccountServiceImpl();
+        Response response = accountService.getSpecificAccount(userID, token);
+
+        if (response.getStatusCode() == RestRequestStatus.SC_OK) {
+
+            Assert.assertEquals(response.getStatusCode(), RestRequestStatus.SC_OK);
+
+            ResponseAccountAuthorize responseAccountAuthorize = response.body().as(ResponseAccountAuthorize.class);
+
+            Assert.assertNotNull(responseAccountAuthorize.getUserId());
+            Assert.assertEquals(responseAccountAuthorize.getUsername(), username);
+            Assert.assertNotNull(responseAccountAuthorize.getBooks());
+        }
+        if (response.getStatusCode() == RestRequestStatus.SC_UNAUTHORIZED){
+            Assert.assertEquals(response.getStatusCode(), RestRequestStatus.SC_UNAUTHORIZED);
+            ResponseAccountFailed responseAccountFailed = response.body().as(ResponseAccountFailed.class);
+
+            Assert.assertEquals(responseAccountFailed.getCode(),1207);
+            Assert.assertEquals(responseAccountFailed.getMessage(), "User not found!");
+
+        }
+    }
+
+    public void deleteSpecificAccount(String userID, String token){
+        accountService =new AccountServiceImpl();
+        Response response =accountService.deleteSpecificUser(userID, token);
+
+        Assert.assertEquals(response.getStatusCode(), RestRequestStatus.SC_NOCONTENT);
+
 
     }
 

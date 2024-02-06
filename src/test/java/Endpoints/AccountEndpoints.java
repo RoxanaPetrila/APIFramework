@@ -6,5 +6,7 @@ public class AccountEndpoints {
     public static final String ACCOUNT_TOKEN = "/Account/v1/GenerateToken";
     public static final String ACCOUNT_USERSPECIFIC = "/Account/v1/User/{userID}";
 
+    public static final String ACCOUNT_DELETE = "/Account/v1/User/{userID}";
+
 
 }

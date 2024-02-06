@@ -28,6 +28,14 @@ public class AccountServiceImpl implements AccountServiceInterface {
         String finalEndpoint = AccountEndpoints.ACCOUNT_USERSPECIFIC.replace("{userID}",userID);
         return accountAPIService.get(finalEndpoint,token);
     }
+
+    @Override
+    public Response deleteSpecificUser(String userID, String token) {
+        accountAPIService = new AccountAPIService();
+        String finalEndpoint = AccountEndpoints.ACCOUNT_DELETE.replace("{userID}",userID);
+        return accountAPIService.delete(finalEndpoint,token);
+
+    }
     //implementarea serviciului definit in inerfaceService
 
 }
