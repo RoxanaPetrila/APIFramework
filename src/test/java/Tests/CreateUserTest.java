@@ -6,15 +6,16 @@ import Objects.RequestObject.RequestAccount;
 import Objects.RequestObject.RequestAccountToken;
 import Objects.ResponseObject.ResponseSuccessAccount;
 import Objects.ResponseObject.ResponseTokenSuccess;
+import PropertyUtility.PropertyUtility;
 import org.testng.annotations.Test;
 
 public class CreateUserTest extends Hooks {
     public String userID;
-    public String username;
-    public String password; // le facem variabile globale, sa le poti folosi in toate requesturile si de create si de auth si de delete etc..
+    // le facem variabile globale, sa le poti folosi in toate requesturile si de create si de auth si de delete etc..
 
     public String token;
     public AccountActions accountActions;
+    public RequestAccount requestAccount;
 
 
     @Test
@@ -41,10 +42,10 @@ public class CreateUserTest extends Hooks {
 
     public void createUser() {
         accountActions = new AccountActions();
-        username = "Roxana" + System.currentTimeMillis();
-        password = "Password1224!";
 
-        RequestAccount requestAccount = new RequestAccount(username, password);
+        PropertyUtility propertyUtility = new PropertyUtility("CreateUser");
+
+        requestAccount = new RequestAccount(propertyUtility.getAllData());
         ResponseSuccessAccount responseSuccessAccount = accountActions.createNewAccount(requestAccount);
 
         userID = responseSuccessAccount.getUserID();
@@ -55,7 +56,7 @@ public class CreateUserTest extends Hooks {
     // Facem un request  care ne genereaza un token (autentificare )
     public void generateToken() {
         accountActions = new AccountActions();
-        RequestAccountToken requestAccountToken = new RequestAccountToken(username, password);
+        RequestAccountToken requestAccountToken = new RequestAccountToken(requestAccount.getUserName(), requestAccount.getPassword());
         ResponseTokenSuccess responseTokenSuccess = accountActions.generateToken(requestAccountToken);
 
         token = responseTokenSuccess.getToken();
@@ -64,7 +65,7 @@ public class CreateUserTest extends Hooks {
 
     public void interractNewUser() {
         accountActions = new AccountActions();
-        accountActions.obtainSpecificAccount(userID, token, username);
+        accountActions.obtainSpecificAccount(userID, token, requestAccount.getUserName());
     }
 
     //Stergem noul user creat
