@@ -1,4 +1,4 @@
-package RequestObject;
+package Objects.RequestObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

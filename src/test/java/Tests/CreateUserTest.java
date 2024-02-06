@@ -1,25 +1,28 @@
 package Tests;
 
-import RequestObject.RequestAccount;
-import RequestObject.RequestAccountToken;
-import RequestObject.ResponseAccountFailed;
-import ResponseObject.ResponseAccountAuthorize;
-import ResponseObject.ResponseSuccessAccount;
-import ResponseObject.ResponseTokenSuccess;
+import Actions.AccountActions;
+import Hooks.Hooks;
+import Objects.RequestObject.RequestAccount;
+import Objects.RequestObject.RequestAccountToken;
+import Objects.RequestObject.ResponseAccountFailed;
+import Objects.ResponseObject.ResponseAccountAuthorize;
+import Objects.ResponseObject.ResponseSuccessAccount;
+import Objects.ResponseObject.ResponseTokenSuccess;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
-import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class CreateUserTest {
+public class CreateUserTest extends Hooks {
     public String userID;
     public String username;
     public String password; // le facem variabile globale, sa le poti folosi in toate requesturile si de create si de auth si de delete etc..
 
     public String token;
+    public AccountActions accountActions;
+
 
 
     @Test
@@ -29,10 +32,10 @@ public class CreateUserTest {
         createUser();
         System.out.println("Step 2. Generate Token");
         generateToken();
-        System.out.println("Step 3. Obtain new user");
-        interractNewUser();
-        System.out.println("Step 4. creat a user which exists");
-        createUserFail();
+//        System.out.println("Step 3. Obtain new user");
+//        interractNewUser();
+//        System.out.println("Step 4. creat a user which exists");
+//        createUserFail();
 
 
 
@@ -74,54 +77,71 @@ public class CreateUserTest {
     }
 
     public void createUser(){
-
-        RequestSpecification requestSpecification = RestAssured.given(); // asa se cogigureaza clientul cu anumite specificatii
-        requestSpecification.baseUri("https://demoqa.com"); //url-ul de baza din swagger (client)
-        requestSpecification.contentType("application/json"); //body-ul va fi de tipul json
-
+        accountActions=new AccountActions();
         username = "Roxana" + System.currentTimeMillis();
         password = "Password1224!";
 
         RequestAccount requestAccount = new RequestAccount(username, password);
-        requestSpecification.body(requestAccount);
+        ResponseSuccessAccount responseSuccessAccount = accountActions.createNewAccount(requestAccount);
 
-        Response response = requestSpecification.post("/Account/v1/User");
+        userID = responseSuccessAccount.getUserID();
 
-        ResponseBody body = response.getBody();
-        body.prettyPrint();
 
-        Assert.assertEquals(response.getStatusCode(), 201);
+//        RequestSpecification requestSpecification = RestAssured.given(); // asa se cogigureaza clientul cu anumite specificatii
+//        requestSpecification.baseUri("https://demoqa.com"); //url-ul de baza din swagger (client)
+//        requestSpecification.contentType("application/json"); //body-ul va fi de tipul json
 
-        ResponseSuccessAccount responseSuccessAccount = response.body().as(ResponseSuccessAccount.class); //response-ul trebuie sa fie de tipul classei resonse SuccessAccount
-        Assert.assertNotNull(responseSuccessAccount.getUserID());  // se verifica ca exista o valoare pentru fieldul asta
-        Assert.assertEquals(responseSuccessAccount.getUsername(), username); // se verifica ca uername-ul are valoarea din request
-        Assert.assertNotNull(responseSuccessAccount.getBooks());
-        userID = responseSuccessAccount.getUserID(); // scoti userId si il salvezi sa il folosesti mai departe in alte request-uri
+
+//        username = "Roxana" + System.currentTimeMillis();
+//        password = "Password1224!";
+//
+//        RequestAccount requestAccount = new RequestAccount(username, password);
+//        requestSpecification.body(requestAccount);
+//
+//        Response response = requestSpecification.post("/Account/v1/User");
+//
+//        ResponseBody body = response.getBody();
+//        body.prettyPrint();
+//
+//        Assert.assertEquals(response.getStatusCode(), 201);
+//
+//        ResponseSuccessAccount responseSuccessAccount = response.body().as(ResponseSuccessAccount.class); //response-ul trebuie sa fie de tipul classei resonse SuccessAccount
+//        Assert.assertNotNull(responseSuccessAccount.getUserID());  // se verifica ca exista o valoare pentru fieldul asta
+//        Assert.assertEquals(responseSuccessAccount.getUsername(), username); // se verifica ca uername-ul are valoarea din request
+//        Assert.assertNotNull(responseSuccessAccount.getBooks());
+//        userID = responseSuccessAccount.getUserID(); // scoti userId si il salvezi sa il folosesti mai departe in alte request-uri
 
     }
 
     // Facem un request  care ne genereaza un token (autentificare )
     public void generateToken() {
-        RequestSpecification requestSpecification = RestAssured.given();
-        requestSpecification.baseUri("https://demoqa.com");
-        requestSpecification.contentType("application/json");
-
+        accountActions  = new AccountActions();
         RequestAccountToken requestAccountToken = new RequestAccountToken(username, password);
-        requestSpecification.body(requestAccountToken);
+        ResponseTokenSuccess responseTokenSuccess = accountActions.generateToken(requestAccountToken);
 
-        Response response = requestSpecification.post("/Account/v1/GenerateToken");
+        token = responseTokenSuccess.getToken();
 
-        ResponseBody body = response.getBody();
-        body.prettyPrint();
 
-        Assert.assertEquals(response.getStatusCode(), 200);
-        ResponseTokenSuccess responseTokenSuccess = response.body().as(ResponseTokenSuccess.class);
-
-        Assert.assertNotNull(responseTokenSuccess.getToken());
-        Assert.assertNotNull(responseTokenSuccess.getExpires());
-        Assert.assertEquals(responseTokenSuccess.getStatus(), "Success");
-        Assert.assertEquals(responseTokenSuccess.getResult(), "User authorized successfully.");
-        token = responseTokenSuccess.getToken(); // ca sa salveze valoarea tokenului si se foloseste apoi ca valoarea a variabilelei globale
+//        RequestSpecification requestSpecification = RestAssured.given();
+//        requestSpecification.baseUri("https://demoqa.com");
+//        requestSpecification.contentType("application/json");
+//
+//        RequestAccountToken requestAccountToken = new RequestAccountToken(username, password);
+//        requestSpecification.body(requestAccountToken);
+//
+//        Response response = requestSpecification.post("/Account/v1/GenerateToken");
+//
+//        ResponseBody body = response.getBody();
+//        body.prettyPrint();
+//
+//        Assert.assertEquals(response.getStatusCode(), 200);
+//        ResponseTokenSuccess responseTokenSuccess = response.body().as(ResponseTokenSuccess.class);
+//
+//        Assert.assertNotNull(responseTokenSuccess.getToken());
+//        Assert.assertNotNull(responseTokenSuccess.getExpires());
+//        Assert.assertEquals(responseTokenSuccess.getStatus(), "Success");
+//        Assert.assertEquals(responseTokenSuccess.getResult(), "User authorized successfully.");
+//        token = responseTokenSuccess.getToken(); // ca sa salveze valoarea tokenului si se foloseste apoi ca valoarea a variabilelei globale
     }
 
         // Facem un get pentru userul creat

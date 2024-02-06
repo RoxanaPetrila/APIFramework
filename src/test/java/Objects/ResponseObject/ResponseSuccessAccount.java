@@ -1,13 +1,13 @@
-package ResponseObject;
+package Objects.ResponseObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ResponseAccountAuthorize {
+public class ResponseSuccessAccount {
 
-    @JsonProperty("userId")
-    private String userId;
+    @JsonProperty("userID")
+    private String userID;
     //maparea unei prime variabile pe care respone-ul o oare
     @JsonProperty("username")
     private String username;
@@ -15,8 +15,8 @@ public class ResponseAccountAuthorize {
     @JsonProperty("books")
     private List<BookObject> books; // am construit un obiect care sa contina toate informatiile partii books
 
-    public String getUserId() {
-        return userId;
+    public String getUserID() {
+        return userID;
     }
 
     public String getUsername() {

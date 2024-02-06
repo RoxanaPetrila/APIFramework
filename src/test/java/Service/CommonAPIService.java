@@ -17,9 +17,12 @@ public class CommonAPIService {
                 RequestSpecification requestSpecification = RestAssured.given();
         requestSpecification.body(body);
 
+        APIServiceHelper.requestLogs(requestSpecification, URL, RestRequestType.REQUEST_POST ); //pentru logguri
+
         //trebuie facut response-ul
         Response response = performRequest(RestRequestType.REQUEST_POST, requestSpecification, URL);
         return response;
+
     }
 
     public Response post(Object body, String URL, String token){
@@ -28,6 +31,8 @@ public class CommonAPIService {
         RequestSpecification requestSpecification = RestAssured.given();
         requestSpecification.header("Authorization", "Bearer " + token);
         requestSpecification.body(body);
+
+
 
         //trebuie facut response-ul
         Response response = performRequest(RestRequestType.REQUEST_POST, requestSpecification, URL);
